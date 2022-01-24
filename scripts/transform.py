@@ -28,5 +28,14 @@ sample_info_pd.rename(columns={'File.ID': 'file_id', 'File.Name': 'filename', 'D
 gene_annot_pd.rename(columns={'SYMBOL': 'symbol', 'GENEID': 'gene_id'}, inplace= True);
 count_pd.rename(columns={'ENSEMBL_ID': 'gene_id'}, inplace = True);
 
-# Reshaping dataframe
+# Reshaping count dataframe from wide to long, so that the filenames become
+# data points rather than column names
 count_pd_melted = pd.melt(count_pd, ['gene_id'])
+
+# Rename column variable to filename
+count_pd_melted.rename(columns={'variable':'filename'}, inplace=True)
+
+# Transform OS_Event depending on the vital status. Dead and Alive (vital_status)
+# is 0 and 1 (os_event), respectively.
+clinical_pd.loc[clinical_pd['vital_status'] == 'Dead', 'os_event'] = 0 # replace all values with 0
+clinical_pd.loc[clinical_pd['vital_status'] == 'Alive', 'os_event'] = 1 # make sure alive is 0 in os_event
