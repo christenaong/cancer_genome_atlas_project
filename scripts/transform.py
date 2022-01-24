@@ -39,3 +39,5 @@ count_pd_melted.rename(columns={'variable':'filename'}, inplace=True)
 # is 0 and 1 (os_event), respectively.
 clinical_pd.loc[clinical_pd['vital_status'] == 'Dead', 'os_event'] = 0 # replace all values with 0
 clinical_pd.loc[clinical_pd['vital_status'] == 'Alive', 'os_event'] = 1 # make sure alive is 0 in os_event
+
+clinical_pd['months_to_last_follow_up'] = (clinical_pd['os_time'] / 30.4167)
