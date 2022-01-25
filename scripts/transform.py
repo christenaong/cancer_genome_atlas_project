@@ -31,13 +31,19 @@ count_pd.rename(columns={'ENSEMBL_ID': 'gene_id'}, inplace = True);
 # Reshaping count dataframe from wide to long, so that the filenames become
 # data points rather than column names
 count_pd_melted = pd.melt(count_pd, ['gene_id'])
+tmm_cpm_melted = pd.melt(tmm_cpm_pd)
 
 # Rename column variable to filename
-count_pd_melted.rename(columns={'variable':'filename'}, inplace=True)
+count_pd_melted.rename(columns={'variable':'filename', 'value':'counts'}, inplace=True)
+tmm_cpm_melted.rename(columns = {'variable':'filename', 'value':'normalised_counts'}, inplace = True)
 
 # Transform OS_Event depending on the vital status. Dead and Alive (vital_status)
 # is 0 and 1 (os_event), respectively.
 clinical_pd.loc[clinical_pd['vital_status'] == 'Dead', 'os_event'] = 0 # replace all values with 0
 clinical_pd.loc[clinical_pd['vital_status'] == 'Alive', 'os_event'] = 1 # make sure alive is 0 in os_event
 
+# New column in clinical dataset called 'months_to_last_follow_up' calculated based on os_time (days to last follow up)
 clinical_pd['months_to_last_follow_up'] = (clinical_pd['os_time'] / 30.4167)
+
+# Adding normalised counts from tmm dataset to counts dataset
+count_pd_melted['normalised_counts'] = tmm_cpm_melted['normalised_counts']
